@@ -63,9 +63,8 @@ email = st.text_input("Correo Electrónico")
 # Verificación de correo antes de mostrar el formulario
 if st.button("🔓 Acceder"):
     if name and email:
-        if not validate_user(email):
-            st.success("Ya has completado la encuesta. Gracias por tu participación 🙌")
-            
+        if validate_user(email):
+          
             # Mostrar formulario solo si el correo es válido
             with st.form("survey_form"):
                 if "responses" not in st.session_state:
@@ -90,6 +89,6 @@ if st.button("🔓 Acceder"):
                     st.success("Encuesta enviada con éxito. ¡Gracias!")
                     st.session_state["responses"].clear()  # Clear responses after submission
         else:
-            st.error("Este correo ya ha completado la encuesta.")
+             st.success("Ya has completado la encuesta. Gracias por tu participación 🙌")
     else:
         st.warning("Por favor, completa ambos campos para validar tu correo.")

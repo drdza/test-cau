@@ -48,7 +48,7 @@ with open("preguntas.json", "r") as file:
     survey_data = json.load(file)
 
 # User registration validation
-def validate_user(name, email):
+def validate_user(email):
     records = sheet.get_all_records()
     return not any(record["Email"] == email for record in records)
 

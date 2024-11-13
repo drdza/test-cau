@@ -44,7 +44,7 @@ os.remove("temp_credentials.json")
 sheet = client.open(os.getenv("GCP_GOOGLE_SHEET_NAME")).sheet1
 
 # Load questions from JSON file
-with open("questions.json", "r") as file:
+with open("preguntas.json", "r") as file:
     survey_data = json.load(file)
 
 # User registration validation

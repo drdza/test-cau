@@ -61,7 +61,7 @@ name = st.text_input("Nombre")
 email = st.text_input("Correo Electrónico")
 
 # Verificación de correo antes de mostrar el formulario
-if st.button("Acceder"):
+if st.button("🔓 Acceder"):
     if name and email:
         if not validate_user(email):
             st.success("Ya has completado la encuesta. Gracias por tu participación 🙌")

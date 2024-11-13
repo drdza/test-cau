@@ -41,7 +41,7 @@ client = gspread.authorize(credentials)
 # Eliminar el archivo temporal de credenciales para mayor seguridad
 os.remove("temp_credentials.json")
 
-sheet = client.open(os.getenv("FCP_GOOGLE_SHEET_NAME")).sheet1
+sheet = client.open(os.getenv("GCP_GOOGLE_SHEET_NAME")).sheet1
 
 # Load questions from JSON file
 with open("questions.json", "r") as file:

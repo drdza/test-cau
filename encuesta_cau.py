@@ -60,31 +60,36 @@ st.write("Please enter your information and complete each section of the survey.
 name = st.text_input("Nombre")
 email = st.text_input("Correo Electrónico")
 
-# Create form to prevent reloading on every question input
-with st.form("survey_form"):
+# Verificación de correo antes de mostrar el formulario
+if st.button("Validar Email"):
     if name and email:
-        if validate_user(name, email):
-            # Initialize session state for each question
-            if "responses" not in st.session_state:
-                st.session_state["responses"] = {}
+        if validate_user(email):
+            st.success("El correo es válido. Puedes proceder a completar la encuesta.")
+            
+            # Mostrar formulario solo si el correo es válido
+            with st.form("survey_form"):
+                if "responses" not in st.session_state:
+                    st.session_state["responses"] = {}
 
-            # Display each section and question in form
-            for section in survey_data["sections"]:
-                st.subheader(section["title"])
-                for question in section["questions"]:
-                    key = f"{section['title']} - {question}"
-                    st.session_state["responses"][key] = st.text_area(question, key=key)
+                # Display each section and question in form
+                for section in survey_data["sections"]:
+                    st.subheader(section["title"])
+                    for question in section["questions"]:
+                        key = f"{section['title']} - {question}"
+                        st.session_state["responses"][key] = st.text_area(question, key=key)
 
-            # Form submission button
-            submit_button = st.form_submit_button("Enviar Encuesta")
-            if submit_button:
-                # Collect and save the responses to Google Sheets
-                row = [name, email] + [st.session_state["responses"].get(f"{section['title']} - {q}", "")
-                                       for section in survey_data["sections"]
-                                       for q in section["questions"]]
-                
-                sheet.append_row(row)
-                st.success("Encuesta enviada con éxito. ¡Gracias!")
-                st.session_state["responses"].clear()  # Clear responses after submission
+                # Form submission button
+                submit_button = st.form_submit_button("Enviar Encuesta")
+                if submit_button:
+                    # Collect and save the responses to Google Sheets
+                    row = [name, email] + [st.session_state["responses"].get(f"{section['title']} - {q}", "")
+                                           for section in survey_data["sections"]
+                                           for q in section["questions"]]
+                    
+                    sheet.append_row(row)
+                    st.success("Encuesta enviada con éxito. ¡Gracias!")
+                    st.session_state["responses"].clear()  # Clear responses after submission
         else:
-            st.error("Ya has completado esta encuesta.")
+            st.error("Este correo ya ha completado la encuesta.")
+    else:
+        st.warning("Por favor, completa ambos campos para validar tu correo.")

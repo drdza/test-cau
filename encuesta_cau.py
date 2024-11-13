@@ -60,23 +60,29 @@ st.write("Please enter your information and complete each section of the survey.
 name = st.text_input("Nombre")
 email = st.text_input("Correo Electrónico")
 
+# Initialize session state for each question
+if "responses" not in st.session_state:
+    st.session_state["responses"] = {}
+
 if st.button("Iniciar Encuesta"):
     if name and email:
         if validate_user(name, email):
-            responses = {"Nombre": name, "Email": email}
-
-            # Display each survey section
+            # Loop through each section and store answers in session_state
             for section in survey_data["sections"]:
                 st.header(section["title"])
-                section_responses = []
                 for question in section["questions"]:
-                    answer = st.text_area(question, key=question)
-                    section_responses.append(answer)
-                responses[section["title"]] = section_responses
+                    key = f"{section['title']} - {question}"
+                    st.session_state["responses"][key] = st.text_area(question, key=key)
 
             if st.button("Enviar Respuestas"):
-                sheet.append_row([responses[key] for key in responses])
+                # Prepare the row to insert
+                row = [name, email] + [st.session_state["responses"].get(f"{section['title']} - {q}", "") 
+                                       for section in survey_data["sections"] 
+                                       for q in section["questions"]]
+                
+                sheet.append_row(row)
                 st.success("Encuesta enviada con éxito. ¡Gracias!")
+                st.session_state["responses"].clear()  # Clear responses after submission
         else:
             st.error("Ya has completado esta encuesta.")
     else:

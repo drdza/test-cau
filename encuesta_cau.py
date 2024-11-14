@@ -55,6 +55,10 @@ def validate_user(email):
 # Contar la cantidad total de preguntas en el JSON
 total_questions = sum(len(section["questions"]) for section in survey_data["sections"])
 
+# Initialize session state for form submission tracking
+if "form_submitted" not in st.session_state:
+    st.session_state["form_submitted"] = False
+
 # App UI and survey
 st.title("CAU & Soporte Survey")
 st.write("Please enter your information and complete each section of the survey.")
@@ -84,7 +88,7 @@ if st.button("🔓 Acceder"):
 
                 # Form submission button
                 submit_button = st.form_submit_button("Enviar Encuesta")
-                if submit_button:
+                if submit_button and not st.session_state["form_submitted"]:
                     # Collect and save the responses to Google Sheets
                     row = [name, email] + [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]
                     
@@ -92,9 +96,11 @@ if st.button("🔓 Acceder"):
                     try:
                         sheet.append_row(row)
                         st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
+                        st.session_state["form_submitted"] = True  # Marcar como enviado para evitar reinicios
+
                         st.session_state["responses"].clear()  # Clear responses after submission
                     except Exception as e:
-                        st.error(f"Error al insertar datos en Google Sheets: {e}")                  
+                        st.error(f"Error al insertar datos en Google Sheets: {e}")
         else:
              st.success("Ya has completado la encuesta. 🙌 Gracias por tu participación.")
     else:

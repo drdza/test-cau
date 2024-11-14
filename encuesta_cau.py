@@ -52,6 +52,9 @@ def validate_user(email):
     records = sheet.get_all_records()
     return not any(record["Email"] == email for record in records)
 
+# Contar la cantidad total de preguntas en el JSON
+total_questions = sum(len(section["questions"]) for section in survey_data["sections"])
+
 # App UI and survey
 st.title("CAU & Soporte Survey")
 st.write("Please enter your information and complete each section of the survey.")
@@ -64,7 +67,7 @@ email = st.text_input("Correo Electrónico")
 if st.button("🔓 Acceder"):
     if name and email:
         if validate_user(email):
-            st.success("Ya has completado la encuesta. Gracias por tu participación 🙌")          
+            st.success("👍 Gracias por apoyarnos, te pedimos que respondas todas las preguntas.")          
             # Mostrar formulario solo si el correo es válido
             with st.form("survey_form"):
                 if "responses" not in st.session_state:
@@ -74,21 +77,22 @@ if st.button("🔓 Acceder"):
                 for section in survey_data["sections"]:
                     st.subheader(section["title"])
                     for question in section["questions"]:
-                        key = f"{section['title']} - {question}"
+                       # Extraer número de pregunta usando regex
+                        question_number = re.match(r"(\d+)", question).group(1)
+                        key = f"Pregunta {question_number}"  # Crear clave en el formato "Pregunta N"
                         st.session_state["responses"][key] = st.text_area(question, key=key)
 
                 # Form submission button
                 submit_button = st.form_submit_button("Enviar Encuesta")
                 if submit_button:
                     # Collect and save the responses to Google Sheets
-                    row = [name, email] + [st.session_state["responses"].get(f"{section['title']} - {q}", "")
-                                           for section in survey_data["sections"]
-                                           for q in section["questions"]]
+                    row = [name, email] + [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]
+                    
                     
                     sheet.append_row(row)
-                    st.success("Encuesta enviada con éxito. ¡Gracias!")
+                    st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
                     st.session_state["responses"].clear()  # Clear responses after submission
         else:
-             st.success("Ya has completado la encuesta. Gracias por tu participación 🙌")
+             st.success("Ya has completado la encuesta. 🙌 Gracias por tu participación.")
     else:
         st.warning("Por favor, completa ambos campos para validar tu correo.")

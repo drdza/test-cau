@@ -89,9 +89,12 @@ if st.button("🔓 Acceder"):
                     row = [name, email] + [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]
                     
                     st.write(row)
-                    sheet.append_row(row)
-                    st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
-                    st.session_state["responses"].clear()  # Clear responses after submission
+                    try:
+                        sheet.append_row(row)
+                        st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
+                        st.session_state["responses"].clear()  # Clear responses after submission
+                    except Exception as e:
+                        st.error(f"Error al insertar datos en Google Sheets: {e}")                  
         else:
              st.success("Ya has completado la encuesta. 🙌 Gracias por tu participación.")
     else:

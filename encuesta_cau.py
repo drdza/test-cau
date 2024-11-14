@@ -101,7 +101,7 @@ if st.button("🔓 Acceder"):
                         st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
                         st.session_state["form_submitted"] = True  # Marcar como enviado para evitar reinicios
 
-                        st.session_state["responses"].clear()  # Clear responses after submission
+                        #st.session_state["responses"].clear()  # Clear responses after submission
                     except Exception as e:
                         st.error(f"Error al insertar datos en Google Sheets: {e}")
         else:

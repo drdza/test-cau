@@ -69,7 +69,15 @@ email = st.text_input("Correo Electrónico")
 if st.button("🔓 Acceder"):
     if name and email:
         if validate_user(email):
-            st.success("👍 Gracias por apoyarnos, te pedimos que respondas todas las preguntas.")          
+            st.success("👍 Gracias por apoyarnos, te pedimos que respondas todas las preguntas.")  
+            # Intentar escribir en la hoja de Google
+            try:
+                test_row = ["Prueba", "test@example.com", "Respuesta 1", "Respuesta 2", "Respuesta 3"]
+                sheet.append_row(test_row)
+                print("✅ Datos de prueba escritos en la hoja de Google con éxito.")
+            except Exception as e:
+                print(f"Error al escribir en la hoja de Google: {e}")
+                
             # Mostrar formulario solo si el correo es válido
             with st.form("survey_form"):
                 if "responses" not in st.session_state:
@@ -82,10 +90,10 @@ if st.button("🔓 Acceder"):
                         # Extraer número de pregunta usando regex
                         question_number = re.match(r"(\d+)", question).group(1)
                         key = f"Pregunta {question_number}"  # Crear clave en el formato "Pregunta N"
-                        st.session_state["responses"][key] = st.text_area(question, key=key)                        
+                        st.session_state["responses"][key] = st.text_area(question, key=key) 
+                        
                 # Form submission button
                 submit_button = st.form_submit_button("Enviar Encuesta")
-
                 # Verificar y procesar envío del formulario
                 if submit_button and not st.session_state["form_submitted"]:
                     # Crear la fila de datos

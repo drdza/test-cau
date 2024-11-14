@@ -9,9 +9,8 @@ import re
 # Detecta si estamos en Streamlit Cloud o localmente
 env = os.getenv('GCP_ENV', 'local')
 
-
 if env == 'local':
-  load_dotenv()
+    load_dotenv()
   
 # Cargar las credenciales desde variables de entorno
 credentials_dict = {
@@ -30,7 +29,6 @@ credentials_dict = {
 # Guardar temporalmente las credenciales para autenticar
 with open("temp_credentials.json", "w") as f:
     json.dump(credentials_dict, f)
-
 
 # Google Sheets setup
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
@@ -81,30 +79,30 @@ if st.button("🔓 Acceder"):
                 for section in survey_data["sections"]:
                     st.subheader(section["title"])
                     for question in section["questions"]:
-                       # Extraer número de pregunta usando regex
+                        # Extraer número de pregunta usando regex
                         question_number = re.match(r"(\d+)", question).group(1)
                         key = f"Pregunta {question_number}"  # Crear clave en el formato "Pregunta N"
                         st.session_state["responses"][key] = st.text_area(question, key=key)
-                      
-                row = [name, email] + [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]
-                st.write(row)
 
                 # Form submission button
                 submit_button = st.form_submit_button("Enviar Encuesta")
+
+                # Verificar y procesar envío del formulario
                 if submit_button and not st.session_state["form_submitted"]:
-                    # Collect and save the responses to Google Sheets
+                    # Crear la fila de datos
                     row = [name, email] + [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]
                     
-                    st.write(row)
+                    # Mostrar los datos a enviar para depuración
+                    st.write("Datos a insertar:", row)
+                    
+                    # Intentar guardar en Google Sheets
                     try:
                         sheet.append_row(row)
                         st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
                         st.session_state["form_submitted"] = True  # Marcar como enviado para evitar reinicios
-
-                        #st.session_state["responses"].clear()  # Clear responses after submission
                     except Exception as e:
                         st.error(f"Error al insertar datos en Google Sheets: {e}")
         else:
-             st.success("Ya has completado la encuesta. 🙌 Gracias por tu participación.")
+            st.success("Ya has completado la encuesta. 🙌 Gracias por tu participación.")
     else:
         st.warning("Por favor, completa ambos campos para validar tu correo.")

@@ -83,9 +83,11 @@ if st.button("🔓 Acceder"):
                     for question in section["questions"]:
                        # Extraer número de pregunta usando regex
                         question_number = re.match(r"(\d+)", question).group(1)
-                        st.write(question_number)
                         key = f"Pregunta {question_number}"  # Crear clave en el formato "Pregunta N"
                         st.session_state["responses"][key] = st.text_area(question, key=key)
+                      
+                row = [name, email] + [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]
+                st.write(row)
 
                 # Form submission button
                 submit_button = st.form_submit_button("Enviar Encuesta")

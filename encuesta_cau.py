@@ -95,7 +95,7 @@ if email:
     st.session_state["email"] = email
 
 # Verificación de correo y visualización de preguntas
-if st.button("🔓 Acceder") and name and email:
+if st.button("Acceder :key: ") and name and email:
     if validate_user(email):
         st.session_state["access_granted"] = True  # Activar acceso
         st.success("👍 Gracias por apoyarnos, te pedimos que respondas todas las preguntas.")

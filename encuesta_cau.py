@@ -35,6 +35,7 @@ scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/au
 try:
     credentials = ServiceAccountCredentials.from_json_keyfile_name("temp_credentials.json", scope)
     client = gspread.authorize(credentials)
+    st.write("✅ Conexión exitosa con Google Sheets.")
 except Exception as e:
     st.error(f"Error en la autenticación con Google Sheets: {e}")
     st.stop()
@@ -46,6 +47,7 @@ os.remove("temp_credentials.json")
 try:
     sheet_name = os.getenv("GCP_GOOGLE_SHEET_NAME")
     sheet = client.open(sheet_name).sheet1
+    st.write("✅ Hoja de Google abierta correctamente.")
 except Exception as e:
     st.error(f"Error al abrir la hoja de Google: {e}")
     st.stop()
@@ -70,52 +72,55 @@ def validate_user(email):
 # Contar preguntas en el JSON
 total_questions = sum(len(section["questions"]) for section in survey_data["sections"])
 
-# Estado inicial para seguimiento de envío
+# Asegurar inicialización de session state
 if "form_submitted" not in st.session_state:
     st.session_state["form_submitted"] = False
+if "row" not in st.session_state:
+    st.session_state["row"] = []
+if "responses" not in st.session_state:
+    st.session_state["responses"] = {}
 
 # Interfaz de la encuesta
 st.title("CAU & Soporte Survey")
 st.write("Please enter your information and complete each section of the survey.")
 
 # Entrada de usuario
-name = st.text_input("Nombre")
-email = st.text_input("Correo Electrónico")
+name = st.text_input("Nombre", value=st.session_state.get("name", ""))
+email = st.text_input("Correo Electrónico", value=st.session_state.get("email", ""))
 
-# Verificación de correo
+# Guardar en `session_state`
+if name:
+    st.session_state["name"] = name
+if email:
+    st.session_state["email"] = email
+
+# Verificación de correo y visualización de preguntas
 if st.button("🔓 Acceder") and name and email:
     if validate_user(email):
         st.success("👍 Gracias por apoyarnos, te pedimos que respondas todas las preguntas.")
         
-        # Crear formulario
-        with st.form("survey_form"):
-            # Mostrar cada sección y pregunta
-            st.session_state["responses"] = {}
-            for section in survey_data["sections"]:
-                st.subheader(section["title"])
-                for question in section["questions"]:
-                    question_number = re.match(r"(\d+)", question).group(1)
-                    key = f"Pregunta {question_number}"
-                    st.session_state["responses"][key] = st.text_area(question, key=key)
+        # Mostrar cada sección y pregunta sin `st.form`
+        for section in survey_data["sections"]:
+            st.subheader(section["title"])
+            for question in section["questions"]:
+                question_number = re.match(r"(\d+)", question).group(1)
+                key = f"Pregunta {question_number}"
+                st.session_state["responses"][key] = st.text_area(question, key=key)
 
-            # Botón para enviar el formulario
-            submit_button = st.form_submit_button("Enviar Encuesta")
+        # Generar fila de datos y mostrar para revisión
+        st.session_state["row"] = [st.session_state["name"], st.session_state["email"]] + \
+                                  [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]
+        
+        st.write("Datos a insertar:", st.session_state["row"])
 
-            # Procesar envío del formulario
-            if submit_button and not st.session_state["form_submitted"]:
-                # Crear `row` y almacenar en `session_state`
-                st.session_state["row"] = [name, email] + [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]
-                
-                # Mostrar `row` para depuración
-                st.write("Datos a insertar:", st.session_state["row"])
-
-                # Intentar guardar en Google Sheets
-                try:
-                    st.session_state["form_submitted"] = True
-                    sheet.append_row(st.session_state["row"])
-                    st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")                    
-                except Exception as e:
-                    st.error(f"Error al insertar datos en Google Sheets: {e}")
+# Botón para confirmar el envío
+if st.button("Enviar Encuesta") and st.session_state["row"]:
+    try:
+        sheet.append_row(st.session_state["row"])
+        st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
+        st.session_state["form_submitted"] = True
+    except Exception as e:
+        st.error(f"Error al insertar datos en Google Sheets: {e}")
 
 # Mensaje de confirmación si la encuesta ya fue enviada
 if st.session_state["form_submitted"]:

@@ -4,7 +4,7 @@
             "title": "Sobre las Interacciones con los Usuarios",
             "questions": [
                 "1 - ¿Cuáles son las preguntas o solicitudes más frecuentes que reciben de los usuarios finales?",
-                "2 - ¿Existen ciertos tipos de tickets o solicitudes que representan un porcentaje alto de las interacciones?",
+                "2 -  ¿Existen ciertos tipos de tickets o solicitudes que representan un porcentaje alto de las interacciones con los usuarios?",
                 "3 - ¿Cuánto tiempo toma, en promedio, responder a las consultas comunes?",
                 "4 - ¿En qué situaciones los usuarios suelen expresar más frustración o insatisfacción?",
                 "5 - ¿Qué datos o información requieren los usuarios con más frecuencia cuando consultan el estado de un ticket o solicitud?"
@@ -16,13 +16,13 @@
                 "6 - ¿Cuáles son los pasos principales que siguen para atender una solicitud desde el momento en que se recibe hasta su cierre?",
                 "7 - ¿Existen puntos en el proceso donde el equipo siente que se podría automatizar alguna tarea repetitiva?",
                 "8 - ¿Cómo priorizan las solicitudes y tickets? ¿Qué criterios utilizan para definir urgencia?",
-                "9 - ¿Hay algún proceso actual de evaluación de la satisfacción del usuario al final de cada caso? ¿Cómo funciona y podría integrarse con el chatbot?"
+                "9 - ¿Hay algún proceso actual de evaluación de la satisfacción del usuario al final de cada caso? De ser así, ¿cómo funciona?"
             ]
         },
         {
             "title": "Sobre la Escalación y Complejidad de los Casos",
             "questions": [
-                "10 - ¿En qué situaciones suelen escalar un caso a otros departamentos o a un agente humano?",
+                "10 -  ¿En qué situaciones suelen escalar un caso a otros departamentos o a un agente?",
                 "11 - ¿Qué información deben recopilar antes de que se pueda tomar una decisión sobre escalar un caso?",
                 "12 - ¿Existen situaciones en las que el equipo de CAU podría resolver problemas básicos sin involucrar a los departamentos especializados?"
             ]
@@ -40,7 +40,7 @@
             "questions": [
                 "16 - ¿Existen tipos de solicitudes que requieren mucho tiempo de investigación o recopilación de datos antes de que puedan ser resueltas?",
                 "17 - ¿Qué situaciones o solicitudes consideran que no están completamente cubiertas por los procesos actuales del CAU?",
-                "18 - ¿Han identificado casos en los que los usuarios necesitan una guía paso a paso en el uso de los servicios que ofrece el CAU?"
+                "18 - ¿Han identificado casos en los que los usuarios necesiten un acompañamiento uno a uno?"
             ]
         },
         {
@@ -52,19 +52,15 @@
             ]
         },
         {
-            "title": "Sobre el Valor Agregado del Chatbot",
+            "title": "Sobre el Valor Agregado de la IA",
             "questions": [
-                "22 - ¿Qué tipo de información o alertas creen que el chatbot podría proporcionar proactivamente para mejorar la experiencia del usuario?",
-                "23 - ¿En qué aspectos creen que un chatbot podría mejorar la percepción de calidad y rapidez en el servicio?",
-                "24 - ¿Cómo imaginan que una herramienta de IA podría aliviar la carga de trabajo actual y permitirles dedicarse a tareas de mayor valor?"
+                "22 - ¿Cómo imaginan que una herramienta de IA podría aliviar la carga de trabajo actual y permitirles dedicarse a tareas de mayor valor?"
             ]
         },
         {
             "title": "Sobre Métricas y Evaluación de Desempeño",
             "questions": [
-                "25 - ¿Qué métricas utilizan actualmente para evaluar la efectividad y calidad del servicio que ofrece el CAU?",
-                "26 - ¿Cuáles serían indicadores clave para medir el éxito de la implementación del chatbot?",
-                "27 - ¿Existen formas en las que el equipo de CAU podría beneficiarse de la analítica del chatbot para optimizar sus operaciones?"
+                "23 - ¿Qué métricas utilizan actualmente para evaluar la efectividad y calidad del servicio que ofrece el CAU?",
             ]
         }
     ]

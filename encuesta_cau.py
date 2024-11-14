@@ -83,43 +83,39 @@ name = st.text_input("Nombre")
 email = st.text_input("Correo Electrónico")
 
 # Verificación de correo
-if st.button("🔓 Acceder"):
-    if name and email:
-        if validate_user(email):
-            st.success("👍 Gracias por apoyarnos, te pedimos que respondas todas las preguntas.")
-            with st.form("survey_form"):
-                if "responses" not in st.session_state:
-                    st.session_state["responses"] = {}
+if st.button("🔓 Acceder") and name and email:
+    if validate_user(email):
+        st.success("👍 Gracias por apoyarnos, te pedimos que respondas todas las preguntas.")
+        
+        # Crear formulario
+        with st.form("survey_form"):
+            # Mostrar cada sección y pregunta
+            st.session_state["responses"] = {}
+            for section in survey_data["sections"]:
+                st.subheader(section["title"])
+                for question in section["questions"]:
+                    question_number = re.match(r"(\d+)", question).group(1)
+                    key = f"Pregunta {question_number}"
+                    st.session_state["responses"][key] = st.text_area(question, key=key)
 
-                # Mostrar cada sección y pregunta
-                for section in survey_data["sections"]:
-                    st.subheader(section["title"])
-                    for question in section["questions"]:
-                        question_number = re.match(r"(\d+)", question).group(1)
-                        key = f"Pregunta {question_number}"
-                        st.session_state["responses"][key] = st.text_area(question, key=key)
+            # Botón para enviar el formulario
+            submit_button = st.form_submit_button("Enviar Encuesta")
 
-                # Botón para enviar el formulario
-                submit_button = st.form_submit_button("Enviar Encuesta")
+            # Procesar envío del formulario
+            if submit_button and not st.session_state["form_submitted"]:
+                # Crear `row` y almacenar en `session_state`
+                st.session_state["row"] = [name, email] + [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]
+                
+                # Mostrar `row` para depuración
+                st.write("Datos a insertar:", st.session_state["row"])
 
-                # Procesar envío del formulario
-                if submit_button and not st.session_state["form_submitted"]:
-                    # Crear `row` y almacenar en `session_state`
-                    st.session_state["row"] = [name, email] + [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]
-                    
-                    # Mostrar `row` para depuración
-                    st.write("Datos a insertar:", st.session_state["row"])
-
-                    try:
-                        sheet.append_row(st.session_state["row"])
-                        st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
-                        st.session_state["form_submitted"] = True
-                    except Exception as e:
-                        st.error(f"Error al insertar datos: {e}")
-        else:
-            st.success("Ya has completado la encuesta. 🙌 Gracias por tu participación.")
-    else:
-        st.warning("Por favor, completa ambos campos para validar tu correo.")
+                # Intentar guardar en Google Sheets
+                try:
+                    sheet.append_row(st.session_state["row"])
+                    st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
+                    st.session_state["form_submitted"] = True
+                except Exception as e:
+                    st.error(f"Error al insertar datos en Google Sheets: {e}")
 
 # Mensaje de confirmación si la encuesta ya fue enviada
 if st.session_state["form_submitted"]:

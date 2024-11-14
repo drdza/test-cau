@@ -4,7 +4,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import json
 import os
 from dotenv import load_dotenv
-
+import re
 
 # Detecta si estamos en Streamlit Cloud o localmente
 env = os.getenv('GCP_ENV', 'local')

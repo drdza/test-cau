@@ -111,9 +111,9 @@ if st.button("🔓 Acceder") and name and email:
 
                 # Intentar guardar en Google Sheets
                 try:
-                    sheet.append_row(st.session_state["row"])
-                    st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
                     st.session_state["form_submitted"] = True
+                    sheet.append_row(st.session_state["row"])
+                    st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")                    
                 except Exception as e:
                     st.error(f"Error al insertar datos en Google Sheets: {e}")
 

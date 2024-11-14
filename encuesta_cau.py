@@ -35,9 +35,8 @@ scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/au
 try:
     credentials = ServiceAccountCredentials.from_json_keyfile_name("temp_credentials.json", scope)
     client = gspread.authorize(credentials)
-    st.write("✅ Conexión exitosa con Google Sheets.")
 except Exception as e:
-    st.error(f"Error en la autenticación con Google Sheets: {e}")
+    st.error(f"Error en la autenticación: {e}")
     st.stop()
 
 # Eliminar archivo de credenciales temporal para seguridad
@@ -46,10 +45,9 @@ os.remove("temp_credentials.json")
 # Intentar abrir la hoja de Google
 try:
     sheet_name = os.getenv("GCP_GOOGLE_SHEET_NAME")
-    sheet = client.open(sheet_name).sheet1
-    st.write("✅ Hoja de Google abierta correctamente.")
+    sheet = client.open(sheet_name).sheet1    
 except Exception as e:
-    st.error(f"Error al abrir la hoja de Google: {e}")
+    st.error(f"Error al acceder a los datos: {e}")
     st.stop()
 
 # Cargar preguntas desde archivo JSON
@@ -79,6 +77,8 @@ if "row" not in st.session_state:
     st.session_state["row"] = []
 if "responses" not in st.session_state:
     st.session_state["responses"] = {}
+if "access_granted" not in st.session_state:
+    st.session_state["access_granted"] = False
 
 # Interfaz de la encuesta
 st.title("CAU & Soporte Survey")
@@ -97,31 +97,34 @@ if email:
 # Verificación de correo y visualización de preguntas
 if st.button("🔓 Acceder") and name and email:
     if validate_user(email):
+        st.session_state["access_granted"] = True  # Activar acceso
         st.success("👍 Gracias por apoyarnos, te pedimos que respondas todas las preguntas.")
-        
-        # Mostrar cada sección y pregunta sin `st.form`
-        for section in survey_data["sections"]:
-            st.subheader(section["title"])
-            for question in section["questions"]:
-                question_number = re.match(r"(\d+)", question).group(1)
-                key = f"Pregunta {question_number}"
-                st.session_state["responses"][key] = st.text_area(question, key=key)
 
-        # Generar fila de datos y mostrar para revisión
-        st.session_state["row"] = [st.session_state["name"], st.session_state["email"]] + \
-                                  [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]
-        
-        st.write("Datos a insertar:", st.session_state["row"])
+# Mostrar preguntas solo si el acceso fue concedido
+if st.session_state["access_granted"]:
+    # Mostrar cada sección y pregunta sin `st.form`
+    for section in survey_data["sections"]:
+        st.subheader(section["title"])
+        for question in section["questions"]:
+            question_number = re.match(r"(\d+)", question).group(1)
+            key = f"Pregunta {question_number}"
+            st.session_state["responses"][key] = st.text_area(question, key=key)
 
-# Botón para confirmar el envío
-if st.button("Enviar Encuesta") and st.session_state["row"]:
-    try:
-        sheet.append_row(st.session_state["row"])
-        st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
-        st.session_state["form_submitted"] = True
-    except Exception as e:
-        st.error(f"Error al insertar datos en Google Sheets: {e}")
+    # Generar fila de datos y mostrar para revisión
+    st.session_state["row"] = [st.session_state["name"], st.session_state["email"]] + \
+                              [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]
+    
+    st.write("Datos a insertar:", st.session_state["row"])
+
+    # Botón para confirmar el envío, solo visible después de acceso
+    if st.button("Enviar Encuesta"):
+        try:
+            sheet.append_row(st.session_state["row"])            
+            st.session_state["form_submitted"] = True
+            st.session_state["access_granted"] = False  # Resetear acceso después de enviar
+        except Exception as e:
+            st.error(f"Error al insertar datos: {e}")
 
 # Mensaje de confirmación si la encuesta ya fue enviada
 if st.session_state["form_submitted"]:
-    st.info("Gracias por enviar la encuesta. No puedes enviar otra respuesta.")
+    st.info("🎉 Encuesta enviada con éxito. ¡Gracias por tu participación!")

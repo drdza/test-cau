@@ -86,7 +86,7 @@ if st.button("🔓 Acceder"):
                         st.session_state["responses"][key] = st.text_area(question, key=key) 
                         
                 # Form submission button
-                submit_button = st.form_submit_button("Enviar Encuesta")
+                submit_button = st.button("Enviar Encuesta")
                 # Verificar y procesar envío del formulario
                 if submit_button and not st.session_state["form_submitted"]:
                     # Crear la fila de datos

@@ -88,7 +88,7 @@ if st.button("🔓 Acceder"):
                     # Collect and save the responses to Google Sheets
                     row = [name, email] + [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]
                     
-                    
+                    st.write(row)
                     sheet.append_row(row)
                     st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
                     st.session_state["responses"].clear()  # Clear responses after submission

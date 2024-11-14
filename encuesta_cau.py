@@ -88,23 +88,20 @@ if st.button("🔓 Acceder"):
                 # Form submission button
                 submit_button = st.form_submit_button("Enviar Encuesta")
                 # Verificar y procesar envío del formulario
-                if st.button("Confirmar Envío"):
+                if submit_button and not st.session_state["form_submitted"]:
                     # Crear la fila de datos
                     st.session_state["row"] = [name, email] + [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]                    
                     
                     # Mostrar los datos a enviar para depuración
                     st.write("Datos a insertar:", st.session_state["row"])                    
 
-                    if submit_button and not st.session_state["form_submitted"]:
+                    if st.button("Confirmar Envío"):
                         try:
                             sheet.append_row(st.session_state["row"])
                             st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
                             st.session_state["form_submitted"] = True
                         except Exception as e:
                             st.error(f"Error al insertar datos en Google Sheets: {e}")
-                else:
-                    st.session_state["row"] = [name, email] + [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]                     
-                    st.write("Datos a insertar desde el else:", st.session_state["row"])     
         else:
             st.success("Ya has completado la encuesta. 🙌 Gracias por tu participación.")
     else:

@@ -86,16 +86,16 @@ if st.button("🔓 Acceder"):
                         st.session_state["responses"][key] = st.text_area(question, key=key) 
                         
                 # Form submission button
-                submit_button = st.button("Enviar Encuesta")
+                submit_button = st.form_submit_button("Enviar Encuesta")
                 # Verificar y procesar envío del formulario
-                if submit_button and not st.session_state["form_submitted"]:
+                if st.button("Confirmar Envío"):
                     # Crear la fila de datos
                     st.session_state["row"] = [name, email] + [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]                    
                     
                     # Mostrar los datos a enviar para depuración
                     st.write("Datos a insertar:", st.session_state["row"])                    
 
-                    if st.button("Confirmar Envío"):
+                    if submit_button and not st.session_state["form_submitted"]:
                         try:
                             sheet.append_row(st.session_state["row"])
                             st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")

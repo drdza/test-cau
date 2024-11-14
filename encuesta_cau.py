@@ -90,7 +90,8 @@ if st.button("🔓 Acceder"):
                 # Verificar y procesar envío del formulario
                 if submit_button and not st.session_state["form_submitted"]:
                     # Crear la fila de datos
-                    row = [name, email] #+ [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]
+                    row = [name, email] 
+                    #+ [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]
                     
                     # Mostrar los datos a enviar para depuración
                     st.write("Datos a insertar:", row)

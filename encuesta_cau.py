@@ -35,7 +35,6 @@ scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/au
 try:
     credentials = ServiceAccountCredentials.from_json_keyfile_name("temp_credentials.json", scope)
     client = gspread.authorize(credentials)
-    st.write("✅ Conexión exitosa con Google Sheets.")
 except Exception as e:
     st.error(f"Error en la autenticación con Google Sheets: {e}")
     st.stop()
@@ -47,7 +46,6 @@ os.remove("temp_credentials.json")
 try:
     sheet_name = os.getenv("GCP_GOOGLE_SHEET_NAME")
     sheet = client.open(sheet_name).sheet1
-    st.write("✅ Hoja de Google abierta correctamente.")
 except Exception as e:
     st.error(f"Error al abrir la hoja de Google: {e}")
     st.stop()

@@ -81,8 +81,8 @@ if "access_granted" not in st.session_state:
     st.session_state["access_granted"] = False
 
 # Interfaz de la encuesta
-st.title("CAU & Soporte Survey")
-st.write("Please enter your information and complete each section of the survey.")
+st.title("🎧 CAU & SOPORTE")
+st.write("Esta encuesta tiene como objetivo identificar situaciones puntuales hacia la atención de los usuarios finales en Tickets y Solicitudes de Servicio.")
 
 # Entrada de usuario
 name = st.text_input("Nombre", value=st.session_state.get("name", ""))

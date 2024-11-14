@@ -110,16 +110,17 @@ if st.button("🔓 Acceder"):
                     # Mostrar `row` para depuración
                     st.write("Datos a insertar:", st.session_state["row"])
 
-                    # Confirmar envío
-                    if st.button("Confirmar Envío"):
-                        try:
-                            sheet.append_row(st.session_state["row"])
-                            st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
-                            st.session_state["form_submitted"] = True
-                        except Exception as e:
-                            st.error(f"Error al insertar datos: {e}")
+                    try:
+                        sheet.append_row(st.session_state["row"])
+                        st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
+                        st.session_state["form_submitted"] = True
+                    except Exception as e:
+                        st.error(f"Error al insertar datos: {e}")
         else:
             st.success("Ya has completado la encuesta. 🙌 Gracias por tu participación.")
     else:
         st.warning("Por favor, completa ambos campos para validar tu correo.")
 
+# Mensaje de confirmación si la encuesta ya fue enviada
+if st.session_state["form_submitted"]:
+    st.info("Gracias por enviar la encuesta. No puedes enviar otra respuesta.")

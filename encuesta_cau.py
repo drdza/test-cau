@@ -114,7 +114,7 @@ if st.session_state["access_granted"]:
     st.session_state["row"] = [st.session_state["name"], st.session_state["email"]] + \
                               [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]
     
-    st.write("Datos a insertar:", st.session_state["row"])
+    #st.write("Datos a insertar:", st.session_state["row"])
 
     # Botón para confirmar el envío, solo visible después de acceso
     if st.button("Enviar Encuesta"):

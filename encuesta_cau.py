@@ -102,6 +102,8 @@ if st.button("🔓 Acceder"):
                             st.session_state["form_submitted"] = True
                         except Exception as e:
                             st.error(f"Error al insertar datos en Google Sheets: {e}")
+                else:
+                    st.warning("Algo pasa aquí")
         else:
             st.success("Ya has completado la encuesta. 🙌 Gracias por tu participación.")
     else:

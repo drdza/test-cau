@@ -67,41 +67,40 @@ email = st.text_input("Correo Electrónico")
 
 # Verificación de correo antes de mostrar el formulario
 if st.button("🔓 Acceder"):
-    if name and email:
-        if validate_user(email):
-            st.success("👍 Gracias por apoyarnos, te pedimos que respondas todas las preguntas.")  
+    if name and validate_user(email):
+        st.success("👍 Gracias por apoyarnos, te pedimos que respondas todas las preguntas.")  
                 
-            # Mostrar formulario solo si el correo es válido
-            with st.form("survey_form"):
-                if "responses" not in st.session_state:
-                    st.session_state["responses"] = {}
+        # Mostrar formulario solo si el correo es válido
+        with st.form("survey_form"):
+            if "responses" not in st.session_state:
+                st.session_state["responses"] = {}
 
-                # Display each section and question in form
-                for section in survey_data["sections"]:
-                    st.subheader(section["title"])
-                    for question in section["questions"]:
-                        # Extraer número de pregunta usando regex
-                        question_number = re.match(r"(\d+)", question).group(1)
-                        key = f"Pregunta {question_number}"  # Crear clave en el formato "Pregunta N"
-                        st.session_state["responses"][key] = st.text_area(question, key=key) 
+            # Display each section and question in form
+            for section in survey_data["sections"]:
+                st.subheader(section["title"])
+                for question in section["questions"]:
+                    # Extraer número de pregunta usando regex
+                    question_number = re.match(r"(\d+)", question).group(1)
+                    key = f"Pregunta {question_number}"  # Crear clave en el formato "Pregunta N"
+                    st.session_state["responses"][key] = st.text_area(question, key=key) 
                         
-                # Form submission button
-                submit_button = st.form_submit_button("Enviar Encuesta")
-                # Verificar y procesar envío del formulario
-                if submit_button and not st.session_state["form_submitted"]:
-                    # Crear la fila de datos
-                    st.session_state["row"] = [name, email] + [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]                    
+            # Form submission button
+            submit_button = st.form_submit_button("Enviar Encuesta")
+            # Verificar y procesar envío del formulario
+            if submit_button and not st.session_state["form_submitted"]:
+                # Crear la fila de datos
+                st.session_state["row"] = [name, email] + [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]                    
                     
-                    # Mostrar los datos a enviar para depuración
-                    st.write("Datos a insertar:", st.session_state["row"])                    
+                # Mostrar los datos a enviar para depuración
+                st.write("Datos a insertar:", st.session_state["row"])                    
 
-                    if st.button("Confirmar Envío"):
-                        try:
-                            sheet.append_row(st.session_state["row"])
-                            st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
-                            st.session_state["form_submitted"] = True
-                        except Exception as e:
-                            st.error(f"Error al insertar datos en Google Sheets: {e}")
+                if st.button("Confirmar Envío"):
+                    try:
+                        sheet.append_row(st.session_state["row"])
+                        st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
+                        st.session_state["form_submitted"] = True
+                    except Exception as e:
+                        st.error(f"Error al insertar datos: {e}")
         else:
             st.success("Ya has completado la encuesta. 🙌 Gracias por tu participación.")
     else:

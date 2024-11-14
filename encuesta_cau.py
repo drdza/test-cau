@@ -103,7 +103,8 @@ if st.button("🔓 Acceder"):
                         except Exception as e:
                             st.error(f"Error al insertar datos en Google Sheets: {e}")
                 else:
-                    st.warning("Algo pasa aquí")
+                    st.session_state["row"] = [name, email] + [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]                     
+                    st.write("Datos a insertar desde el else:", st.session_state["row"])     
         else:
             st.success("Ya has completado la encuesta. 🙌 Gracias por tu participación.")
     else:

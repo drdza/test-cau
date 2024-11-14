@@ -70,13 +70,6 @@ if st.button("🔓 Acceder"):
     if name and email:
         if validate_user(email):
             st.success("👍 Gracias por apoyarnos, te pedimos que respondas todas las preguntas.")  
-            # Intentar escribir en la hoja de Google
-            try:
-                test_row = ["Prueba", "test@example.com", "Respuesta 1", "Respuesta 2", "Respuesta 3"]
-                sheet.append_row(test_row)
-                print("✅ Datos de prueba escritos en la hoja de Google con éxito.")
-            except Exception as e:
-                print(f"Error al escribir en la hoja de Google: {e}")
                 
             # Mostrar formulario solo si el correo es válido
             with st.form("survey_form"):
@@ -97,19 +90,18 @@ if st.button("🔓 Acceder"):
                 # Verificar y procesar envío del formulario
                 if submit_button and not st.session_state["form_submitted"]:
                     # Crear la fila de datos
-                    row = [name, email] 
-                    #+ [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]
+                    st.session_state["row"] = [name, email] + [st.session_state["responses"].get(f"Pregunta {i+1}", "") for i in range(total_questions)]                    
                     
                     # Mostrar los datos a enviar para depuración
-                    st.write("Datos a insertar:", row)
-                    
-                    # Intentar guardar en Google Sheets
-                    try:
-                        sheet.append_row(row)
-                        st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
-                        st.session_state["form_submitted"] = True  # Marcar como enviado para evitar reinicios
-                    except Exception as e:
-                        st.error(f"Error al insertar datos en Google Sheets: {e}")
+                    st.write("Datos a insertar:", st.session_state["row"])                    
+
+                    if st.button("Confirmar Envío"):
+                        try:
+                            sheet.append_row(st.session_state["row"])
+                            st.success("🎉 Encuesta enviada con éxito. ¡Gracias!")
+                            st.session_state["form_submitted"] = True
+                        except Exception as e:
+                            st.error(f"Error al insertar datos en Google Sheets: {e}")
         else:
             st.success("Ya has completado la encuesta. 🙌 Gracias por tu participación.")
     else:

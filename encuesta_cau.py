@@ -29,8 +29,9 @@ if env == 'prod':
         json.dump(credentials_dict, f)
 
 # Configuración de Google Sheets
-scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
-         "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+scope = ["https://www.googleapis.com/auth/spreadsheets",
+         "https://www.googleapis.com/auth/drive.file"
+        ]
 if env == 'prod':
     try:
         credentials = ServiceAccountCredentials.from_json_keyfile_name("temp_credentials.json", scope)

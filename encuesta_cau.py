@@ -8,39 +8,44 @@ import re
 
 # Cargar las credenciales y configuración
 env = os.getenv('GCP_ENV', 'local')
-if env == 'local':
-    load_dotenv()
 
-credentials_dict = {
-    "type": os.getenv("GCP_TYPE"),
-    "project_id": os.getenv("GCP_PROJECT_ID"),
-    "private_key_id": os.getenv("GCP_PRIVATE_KEY_ID"),
-    "private_key": os.getenv("GCP_PRIVATE_KEY").replace('\\n', '\n'),
-    "client_email": os.getenv("GCP_CLIENT_EMAIL"),
-    "client_id": os.getenv("GCP_CLIENT_ID"),
-    "auth_uri": os.getenv("GCP_AUTH_URI"),
-    "token_uri": os.getenv("GCP_TOKEN_URI"),
-    "auth_provider_x509_cert_url": os.getenv("GCP_AUTH_PROVIDER_CERT_URL"),
-    "client_x509_cert_url": os.getenv("GCP_CLIENT_CERT_URL")
-}
-
-# Guardar credenciales temporalmente para la autenticación
-with open("temp_credentials.json", "w") as f:
-    json.dump(credentials_dict, f)
+if env == 'prod':
+    credentials_dict = {
+        "type": os.getenv("GCP_TYPE"),
+        "project_id": os.getenv("GCP_PROJECT_ID"),
+        "private_key_id": os.getenv("GCP_PRIVATE_KEY_ID"),
+        "private_key": os.getenv("GCP_PRIVATE_KEY").replace('\\n', '\n'),
+        "client_email": os.getenv("GCP_CLIENT_EMAIL"),
+        "client_id": os.getenv("GCP_CLIENT_ID"),
+        "auth_uri": os.getenv("GCP_AUTH_URI"),
+        "token_uri": os.getenv("GCP_TOKEN_URI"),
+        "auth_provider_x509_cert_url": os.getenv("GCP_AUTH_PROVIDER_CERT_URL"),
+        "client_x509_cert_url": os.getenv("GCP_CLIENT_CERT_URL")
+    }
+    
+    # Guardar credenciales temporalmente para la autenticación
+    with open("temp_credentials.json", "w") as f:
+        json.dump(credentials_dict, f)
 
 # Configuración de Google Sheets
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
          "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
-
-try:
-    credentials = ServiceAccountCredentials.from_json_keyfile_name("temp_credentials.json", scope)
-    client = gspread.authorize(credentials)
-except Exception as e:
-    st.error(f"Error en la autenticación: {e}")
-    st.stop()
-
-# Eliminar archivo de credenciales temporal para seguridad
-os.remove("temp_credentials.json")
+if env == 'prod':
+    try:
+        credentials = ServiceAccountCredentials.from_json_keyfile_name("temp_credentials.json", scope)
+        client = gspread.authorize(credentials)    
+        os.remove("temp_credentials.json")
+    except Exception as e:
+        st.error(f"Error en la autenticación: {e}")
+        st.stop()
+else:
+    try:
+        credentials = ServiceAccountCredentials.from_service_account_file(os.getenv("GCP_GOOGLE_APPLICATION_CREDENTIALS"))
+        client = gspread.authorize(credentials)
+    except Exception as e:
+        st.error(f"Error en la autenticación: {e}")
+        st.stop()
+    
 
 # Intentar abrir la hoja de Google
 try:

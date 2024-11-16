@@ -41,7 +41,7 @@ if env == 'prod':
         st.stop()
 else:
     try:
-        credentials = ServiceAccountCredentials.from_service_account_file(os.getenv("GCP_GOOGLE_APPLICATION_CREDENTIALS"))
+        credentials = service_account.from_service_account_file(os.getenv("GCP_GOOGLE_APPLICATION_CREDENTIALS"))
         client = gspread.authorize(credentials)
     except Exception as e:
         st.error(f"Error en la autenticación: {e}")

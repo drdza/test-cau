@@ -7,6 +7,7 @@ import os
 from dotenv import load_dotenv
 import re
 
+
 st.set_page_config(
    page_title="Encuesta CAU",
    page_icon="🧊",

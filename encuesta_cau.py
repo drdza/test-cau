@@ -15,7 +15,6 @@ st.set_page_config(
    initial_sidebar_state="expanded",
 )
 
-
 # Cargar las credenciales y configuración
 env = os.getenv('GCP_ENV', 'local')
 

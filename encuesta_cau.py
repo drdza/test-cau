@@ -7,6 +7,14 @@ import os
 from dotenv import load_dotenv
 import re
 
+st.set_page_config(
+   page_title="Encuesta CAU",
+   page_icon="🧊",
+   layout="wide",
+   initial_sidebar_state="expanded",
+)
+
+
 # Cargar las credenciales y configuración
 env = os.getenv('GCP_ENV', 'local')
 
